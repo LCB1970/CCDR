@@ -12,7 +12,7 @@ import warnings
 
 dataset1 = ['Satellite2']  # shape = (512,512), max = 255, min = 0
 dataset2 = ['Aerial']  # shape = (512,512), max = 1, min = 0
-dataset3 = ['Satellite1', 'paris', 'berlin', 'chicago', 'tokyo', 'zurich', 'postdam']  # shape = (512,512,3), 需要转换为灰度
+dataset3 = ['Satellite1', 'paris', 'berlin', 'chicago', 'tokyo', 'zurich', 'postdam']  # shape = (512,512,3), color2gray
 colormap_dic = {
     'Satellite2': [[0, 0, 0], [255, 255, 255]],
     'Satellite1': [[0, 0, 0], [255, 255, 255]],
@@ -23,17 +23,6 @@ colormap_dic = {
     'chicago': [[255, 255, 255], [255, 0, 0], [0, 0, 255]],
     'tokyo': [[255, 255, 255], [255, 0, 0], [0, 0, 255]],
     'zurich': [[255, 255, 255], [255, 0, 0], [0, 0, 255]],
-    '12deepglobe_road': [[0, 0, 0], [255, 255, 255]],
-    '14WHU_road': [[0, 0, 0], [255, 255, 255]],
-    '15mass_building': [[0, 0, 0], [255, 255, 255]],
-    '16mass_roads': [[0, 0, 0], [255, 255, 255]],
-    'AerialKITTI': [[0, 0, 0], [255, 255, 255]],
-    'Bavaria': [[0, 0, 0], [255, 255, 255]],
-    'austin': [[0, 0, 0], [255, 255, 255]],
-    'chicago(v1)': [[0, 0, 0], [255, 255, 255]],
-    'kitsap': [[0, 0, 0], [255, 255, 255]],
-    'tyrol': [[0, 0, 0], [255, 255, 255]],
-    'vienna': [[0, 0, 0], [255, 255, 255]]
 }
 
 
