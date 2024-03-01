@@ -46,7 +46,7 @@ data_transform = transforms.Compose(
 
 dataset = MyDataset(
     data_root=args.data_path,
-    dataset_name='tokyo',
+    dataset_name='paris',
     transform=data_transform,
     img_format=args.format,
     label_format=args.format
