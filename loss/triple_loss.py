@@ -1,7 +1,7 @@
 import torch
 
 
-def triplet_loss(anchor, positive, negative, alpha=0.4, device='cuda:0'):
+def triplet_loss(anchor, positive, negative, alpha):
           """
           Implementation of the triplet loss function
           Arguments:
@@ -21,7 +21,7 @@ def triplet_loss(anchor, positive, negative, alpha=0.4, device='cuda:0'):
           #     anchor = embedding[:,0,:]
           #     positive = embedding[:,1,:]
           #     negative = embedding[:,2,:]
-
+          device = positive.device
           # distance between the anchor and the positive
           pos_dist = torch.sum((anchor - positive).pow(2), axis=1)
 

@@ -10,6 +10,7 @@ class UNet(nn.Module):
         base_model = VGG(layer=16, band=band)
         cn = [64, 128, 256, 512, 512]
         self.backbone = base_model
+        self.layers = ["concat1", "concat2", "concat3", "concat4", "downsample4"]
         self.relu = nn.ReLU(inplace=True)
         self.decoder_layer1 = nn.Sequential(
             nn.Conv2d(cn[3], cn[3] * 2, kernel_size=3, padding=1, bias=False),

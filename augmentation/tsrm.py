@@ -1,5 +1,5 @@
-from rand_conv import RandConv2d
-from randin import RandIN
+from augmentation.rand_conv import RandConv2d
+from augmentation.randin import RandIN
 import torch.nn as nn
 import torch, random
 

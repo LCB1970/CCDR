@@ -15,7 +15,7 @@ from sklearn.model_selection import KFold
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--gpu_number', default=4, type=int)
-parser.add_argument('--data_path', default='/OM/paris')
+parser.add_argument('--data_path', default='data')
 parser.add_argument('--save_weight_path', default=None)
 parser.add_argument('--save_png_path', default=None)
 parser.add_argument('-f', '--format', default='/*.png')
@@ -46,6 +46,7 @@ data_transform = transforms.Compose(
 
 dataset = MyDataset(
     data_root=args.data_path,
+    dataset_name='tokyo',
     transform=data_transform,
     img_format=args.format,
     label_format=args.format
@@ -59,7 +60,6 @@ criterion = nn.CrossEntropyLoss()
 
 def train_model(model, criterion, optimizer, data_loader, num_epochs):
     model = nn.DataParallel(model, device_ids=[i for i in range(args.gpu_number)]).to(device)
-    since = time.time()
     best_model_wts = copy.deepcopy(model.state_dict())
     best_loss = 1e10
     train_loss_all, train_acc_all = [], []
@@ -77,7 +77,7 @@ def train_model(model, criterion, optimizer, data_loader, num_epochs):
         print('-' * 10)
         train_loss, seg_loss, align_loss, train_num, val_loss, val_num = 0, 0, 0, 0, 0, 0
         model.train()
-        model.cuda()
+        model.to(device)
 
         for step, (x, y) in enumerate(data_loader):
             kf = KFold(n_splits=2, shuffle=True)

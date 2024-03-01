@@ -10,12 +10,9 @@ from torchvision.transforms import functional as TF
 import bisect
 import warnings
 
-dataset1 = ['vaihingen']  # 自制标签, shape=(512,512,1), max = n_classes, min = 0
-dataset2 = ['Satellite2', '14WHU_road', '16mass_roads', 'austin', 'chicago(v1)', 'kitsap', 'tyrol',
-            'vienna']  # shape = (512,512), max = 255, min = 0
-dataset3 = ['Aerial']  # shape = (512,512), max = 1, min = 0
-dataset4 = ['Satellite1', 'paris', 'berlin', 'chicago', 'tokyo', 'zurich', 'postdam',
-            '12deepglobe_road', '15mass_building', 'AerialKITTI', 'Bavaria']  # shape = (512,512,3), 需要转换为灰度
+dataset1 = ['Satellite2']  # shape = (512,512), max = 255, min = 0
+dataset2 = ['Aerial']  # shape = (512,512), max = 1, min = 0
+dataset3 = ['Satellite1', 'paris', 'berlin', 'chicago', 'tokyo', 'zurich', 'postdam']  # shape = (512,512,3), 需要转换为灰度
 colormap_dic = {
     'Satellite2': [[0, 0, 0], [255, 255, 255]],
     'Satellite1': [[0, 0, 0], [255, 255, 255]],
@@ -63,8 +60,7 @@ def label2image(prelabel, dataset_name):
 
 
 class MyDataset(Dataset):
-    def __init__(self, data_root, transform=None, img_format="/*.tif", label_format="/*.tif", filename=False):
-        dataset_name = os.path.dirname(data_root).split('/')[-2]
+    def __init__(self, data_root, dataset_name, transform=None, img_format="/*.tif", label_format="/*.tif", filename=False):
         self.data_root = data_root
         img_dir = os.path.join(data_root, 'image')
         label_dir = os.path.join(data_root, 'label')
@@ -73,19 +69,6 @@ class MyDataset(Dataset):
         self.dataset_name = dataset_name
         self.transform = transform
         self.filename = filename
-
-    # def _normalization(self, img, label):
-    #     data_tfs = transforms.Compose([
-    #         transforms.ToTensor(),
-    #         transforms.Normalize([0.485, 0.456, 0.406],
-    #                              [0.229, 0.224, 0.225])])
-    #     img = data_tfs(img)
-    #     if self.dataset_name in dataset1:
-    #         label = torch.from_numpy(np.asarray(label))
-    #         label = label.squeeze(dim=1)
-    #     if self.dataset_name in dataset2:
-    #         label = torch.from_numpy(np.asarray(label)//255)
-    #     return img, label
 
     def __getitem__(self, idx):
         img = self.data_list[idx]
@@ -142,13 +125,10 @@ class MyDataset(Dataset):
         elif isinstance(current_transform, (transforms.ToTensor)):
             img = current_transform(img)
             if self.dataset_name in dataset1:
-                mask = torch.from_numpy(np.asarray(mask))
-                mask = mask.squeeze(dim=1)
-            elif self.dataset_name in dataset2:
                 mask = torch.from_numpy(np.asarray(mask) // 255)
-            elif self.dataset_name in dataset3:
+            elif self.dataset_name in dataset2:
                 mask = torch.from_numpy(np.asarray(mask))
-            elif self.dataset_name in dataset4:
+            elif self.dataset_name in dataset3:
                 mask = np.asarray(mask)
                 mask = image2label(mask, self.dataset_name)
                 mask = torch.from_numpy(mask)
