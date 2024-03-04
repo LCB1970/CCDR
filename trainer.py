@@ -106,6 +106,7 @@ def train_model(model, criterion, optimizer, data_loader, num_epochs):
                 rand_aug = TSRM(args.channel, args.channel, args.kernel_size_list,
                                 args.L_max, args.gamma_std, args.beta_std, True).to(device)
                 rand_aug.randomize()
+                # shuffle auxiliary domain samples
                 idx = torch.randperm(x_train.shape[0])
                 a_x = x_train[idx]
                 a_y = y_train[idx]
@@ -128,27 +129,29 @@ def train_model(model, criterion, optimizer, data_loader, num_epochs):
                 positive = torch.bmm(aug_mask, aug_fea)
                 negative = torch.ones(positive.shape)
                 negative = negative.to(device)
-                anchor = anchor.reshape([args.classes, args.batch_size, -1])
-                positive = positive.reshape([args.classes, args.batch_size, -1])
-                negative = negative.reshape([args.classes, args.batch_size, -1])
-
-                for ci in range(args.classes):
-                    while 1:
-                        cj = random.randint(0, args.classes - 1)
-                        if ci != cj: break
-                    negative[ci] *= positive[cj]
                 anchor = anchor.reshape([args.classes * args.batch_size, -1])
                 positive = positive.reshape([args.classes * args.batch_size, -1])
                 negative = negative.reshape([args.classes * args.batch_size, -1])
-                anchor, positive, negative = F.normalize(anchor, dim=1), F.normalize(positive, dim=1), F.normalize(
-                    negative,
-                    dim=1)
-                loss1 = triplet_loss(anchor, positive, negative, alpha=args.xi)
+
+                loss1, loss1_num = 0, 0
+                for ci in range(args.classes):
+                    for cj in range(args.classes):
+                        if ci == cj:
+                            continue
+                        else:
+                            negative[ci] *= positive[cj]
+                            anchor, positive, negative = F.normalize(anchor, dim=1), F.normalize(positive,
+                                                                                                 dim=1), F.normalize(
+                                negative, dim=1)
+                            loss1 += triplet_loss(anchor, positive, negative, alpha=args.xi)
+                            loss1_num += 1
+
+                loss1 /= loss1_num
                 loss2 = (criterion(out, y_train) + criterion(aug_out, a_y)) / 2
                 loss = loss1 + loss2
 
                 seg_loss += loss2.item() * len(y_train)
-                align_loss += loss1.item() * args.classes * args.batch_size
+                align_loss += loss1 * args.classes * args.batch_size
                 train_loss += loss.item() * len(y_train)
 
                 loss.backward()

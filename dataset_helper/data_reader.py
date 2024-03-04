@@ -49,7 +49,8 @@ def label2image(prelabel, dataset_name):
 
 
 class MyDataset(Dataset):
-    def __init__(self, data_root, dataset_name, transform=None, img_format="/*.tif", label_format="/*.tif", filename=False):
+    def __init__(self, data_root, dataset_name, transform=None, img_format="/*.tif", label_format="/*.tif",
+                 filename=False):
         self.data_root = data_root
         img_dir = os.path.join(data_root, 'image')
         label_dir = os.path.join(data_root, 'label')
