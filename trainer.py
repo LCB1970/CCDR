@@ -157,7 +157,6 @@ def train_model(model, criterion, optimizer, data_loader, num_epochs):
                 loss.backward()
                 optimizer.step()
                 train_num += len(y_train)
-                train_loss_all.append(train_loss / train_num)
 
                 model.eval()
                 x_val = x_val.float().to(device)
@@ -166,11 +165,12 @@ def train_model(model, criterion, optimizer, data_loader, num_epochs):
                 loss = criterion(out, y_val)
                 val_loss += loss.item() * len(y_val)
                 val_num += len(y_val)
-                val_loss_all.append(val_loss / val_num)
 
-            if val_loss_all[-1] < best_loss:
-                best_loss = val_loss_all[-1]
-                best_model_wts = copy.deepcopy(model.state_dict())
+        train_loss_all.append(train_loss / train_num)
+        val_loss_all.append(val_loss / val_num)
+        if val_loss_all[-1] < best_loss:
+            best_loss = val_loss_all[-1]
+            best_model_wts = copy.deepcopy(model.state_dict())
         time_use = time.time() - since
         print("Train and val complete in {:.0f}m {:.0f}s".format(time_use // 60, time_use % 60))
         print('Seg loss: {:.4f}, Align loss: {:.4f}, Train loss: {:.4f}, Val Loss: {:.4f}'.format(
